@@ -28,12 +28,6 @@ public class TodosResourceIT {
     }
 
     @Test
-    public void loop() throws Exception {
-        for(int i = 0; i < 500; i++) {
-            crud();
-        }
-    }
-    @Test
     public void crud() throws Exception {
         // add Todo
         JsonObjectBuilder todoBuilder = Json.createObjectBuilder();
