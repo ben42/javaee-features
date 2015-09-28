@@ -1,22 +1,19 @@
 package ch.afterglowing.doit.business.reminders.boundary;
 
 import ch.afterglowing.doit.business.reminders.entity.Todo;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 import javax.json.JsonObject;
-import javax.ws.rs.*;
-import javax.ws.rs.core.MediaType;
+import javax.ws.rs.DELETE;
+import javax.ws.rs.GET;
+import javax.ws.rs.PUT;
+import javax.ws.rs.Path;
 import javax.ws.rs.core.Response;
-import javax.xml.bind.annotation.XmlTransient;
 
 import static javax.ws.rs.core.Response.Status.BAD_REQUEST;
 
 /**
  * Created by ben on 25.09.15.
  */
-//@JsonSerialize
-//@JsonIgnoreProperties({ "service" })
 public class TodoResource {
 
 

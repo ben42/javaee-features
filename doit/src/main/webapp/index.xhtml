@@ -2,16 +2,29 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
         "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"
-      xmlns:h="http://xmlns.jcp.org/jsf/html" xmlns:jsf="http://xmlns.jcp.org/jsf">
+      xmlns:h="http://xmlns.jcp.org/jsf/html" xmlns:jsf="http://xmlns.jcp.org/jsf" xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
 
-<h:head><title>Title of the Site</title></h:head>
+<h:head>
+    <title>Title of the Site</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css"/>
+</h:head>
 <h:body>
     Welcome from JSF!
     <h:form>
-        Caption: <input jsf:id="caption" placeholder="Enter the caption" type="text" value="#{index.todo.caption}"/>
-        Description: <input jsf:id="description" placeholder="Enter a description" value="#{index.todo.description}"/>
-        Priority: <h:inputText value="#{index.todo.priority}"/>
-        <h:commandButton value="Save" action="#{index.save}"/>
+        <p:growl id="growl" life="2000"/>
+        <h:panelGrid columns="2" cellpadding="3">
+            <h:outputText value="Caption:"/><input jsf:id="caption" class="form-control" placeholder="Enter the caption"
+                                                   type="text" value="#{index.todo.caption}"/>
+            <h:outputText value="Description:"/><p:inputText value="#{index.todo.description}"/>
+            <h:outputText value="Priority:"/><p:inputText value="#{index.todo.priority}"/>
+        </h:panelGrid>
+        <p:commandButton value="Save" action="#{index.save}" update="growl datalist" styleClass="btn btn-primary"/>
+
+        <p:dataList id="datalist" value="#{index.todos}" var="todo" type="ordered">
+            <f:facet name="header">Reminders</f:facet>
+            #{todo.caption}, #{todo.description}, #{todo.priority}
+        </p:dataList>
     </h:form>
 </h:body>
 </html>

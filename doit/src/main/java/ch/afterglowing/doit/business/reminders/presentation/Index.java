@@ -10,6 +10,7 @@ import javax.faces.context.FacesContext;
 import javax.inject.Inject;
 import javax.validation.ConstraintViolation;
 import javax.validation.Validator;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -35,13 +36,17 @@ public class Index {
         return todo;
     }
 
+    public List<Todo> getTodos() {
+        return service.findAll();
+    }
+
     public Object save() {
         Set<ConstraintViolation<Todo>> violations = validator.validate(todo);
         for (ConstraintViolation<Todo> violation : violations) {
             showValidationError(violation.getMessage());
         }
 
-        if(violations.isEmpty()) {
+        if (violations.isEmpty()) {
             service.save(todo);
         }
         return null;

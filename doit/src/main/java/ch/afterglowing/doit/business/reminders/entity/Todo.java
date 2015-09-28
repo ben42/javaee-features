@@ -18,6 +18,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
 @CrossCheck
+@EntityListeners(TodoAuditor.class)
 public class Todo implements ValidEntity {
     public final static String PREFIX = "reminders.entity.Todo.";
     public final static String findAll = PREFIX + "findAll";
@@ -91,6 +92,8 @@ public class Todo implements ValidEntity {
                 ", caption='" + caption + '\'' +
                 ", description='" + description + '\'' +
                 ", priority=" + priority +
+                ", done=" + done +
+                ", version=" + version +
                 '}';
     }
 

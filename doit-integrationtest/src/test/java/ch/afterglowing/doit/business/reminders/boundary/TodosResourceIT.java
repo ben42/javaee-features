@@ -20,7 +20,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
  */
 public class TodosResourceIT {
 
-    private String baseUri = "http://localhost:8081/doit/api/todos";
+    private String baseUri = "http://localhost:8080/doit/api/todos";
 
     private WebTarget target(String uri) {
         // TODO close the client instances
