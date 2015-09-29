@@ -1,4 +1,4 @@
-package ch.afterglowing.doit.business.reminders.boundary;
+package ch.afterglowing.doit.business.encoders;
 
 import javax.json.Json;
 import javax.json.JsonObject;
@@ -11,6 +11,8 @@ import java.io.Writer;
 
 /**
  * Created by ben on 29.09.15.
+ *
+ * In its own package because it's a cross cutting concern.
  */
 public class JsonEncoder implements Encoder.TextStream<JsonObject> {
 

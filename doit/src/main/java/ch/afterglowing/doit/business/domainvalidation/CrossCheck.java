@@ -1,4 +1,4 @@
-package ch.afterglowing.doit.business;
+package ch.afterglowing.doit.business.domainvalidation;
 
 import javax.validation.Constraint;
 import javax.validation.Payload;

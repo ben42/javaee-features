@@ -1,7 +1,7 @@
 package ch.afterglowing.doit.business.reminders.entity;
 
-import ch.afterglowing.doit.business.CrossCheck;
-import ch.afterglowing.doit.business.ValidEntity;
+import ch.afterglowing.doit.business.domainvalidation.CrossCheck;
+import ch.afterglowing.doit.business.domainvalidation.ValidEntity;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;

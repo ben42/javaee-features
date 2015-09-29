@@ -6,6 +6,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 /**
  * Created by ben on 27.09.15.
+ *
+ * Transient entity.
  */
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)

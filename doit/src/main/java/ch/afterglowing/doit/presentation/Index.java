@@ -1,4 +1,4 @@
-package ch.afterglowing.doit.business.reminders.presentation;
+package ch.afterglowing.doit.presentation;
 
 import ch.afterglowing.doit.business.reminders.boundary.TodoService;
 import ch.afterglowing.doit.business.reminders.entity.Todo;

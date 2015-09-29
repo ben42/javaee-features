@@ -1,5 +1,6 @@
 package ch.afterglowing.doit.business.reminders.boundary;
 
+import ch.afterglowing.doit.business.encoders.JsonEncoder;
 import ch.afterglowing.doit.business.reminders.entity.Todo;
 
 import javax.ejb.ConcurrencyManagement;
@@ -19,6 +20,8 @@ import static javax.enterprise.event.TransactionPhase.AFTER_SUCCESS;
 
 /**
  * Created by ben on 27.09.15.
+ *
+ * Gather events and exposes them via websockets.
  */
 @Singleton
 @ServerEndpoint(value = "/changes", encoders = JsonEncoder.class)

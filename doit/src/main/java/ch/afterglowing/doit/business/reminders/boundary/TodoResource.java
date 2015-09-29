@@ -13,9 +13,10 @@ import static javax.ws.rs.core.Response.Status.BAD_REQUEST;
 
 /**
  * Created by ben on 25.09.15.
+ *
+ * REST Subresource (missing @Path on class definition)
  */
 public class TodoResource {
-
 
     long id;
     TodoService service;

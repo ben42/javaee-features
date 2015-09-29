@@ -12,6 +12,9 @@ import java.util.List;
 
 /**
  * Created by ben on 25.09.15.
+ *
+ * Protocol free "boundary" implementation. Plain business logic without any knowledge about used protocols.
+ * Can directly use the EntityManager for data access.
  */
 @Stateless
 @Interceptors(BoundaryLogger.class)

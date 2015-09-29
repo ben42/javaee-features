@@ -1,4 +1,4 @@
-package ch.afterglowing.doit.business;
+package ch.afterglowing.doit.business.domainvalidation;
 
 /**
  * Created by ben on 27.09.15.

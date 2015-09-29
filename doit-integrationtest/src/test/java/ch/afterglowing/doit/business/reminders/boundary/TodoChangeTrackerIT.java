@@ -3,12 +3,14 @@ package ch.afterglowing.doit.business.reminders.boundary;
 import org.junit.Before;
 import org.junit.Test;
 
+import javax.websocket.ClientEndpointConfig;
 import javax.websocket.ContainerProvider;
 import javax.websocket.DeploymentException;
 import javax.websocket.WebSocketContainer;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.Arrays;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
@@ -27,8 +29,9 @@ public class TodoChangeTrackerIT {
         container = ContainerProvider.getWebSocketContainer();
         URI uri = new URI("ws://localhost:8080/doit/changes");
 
+        ClientEndpointConfig config = ClientEndpointConfig.Builder.create().decoders(Arrays.asList(JsonDecoder.class)).build();
         listener = new ChangesListener();
-        container.connectToServer(listener, uri);
+        container.connectToServer(listener, config, uri);
     }
 
     @Test
