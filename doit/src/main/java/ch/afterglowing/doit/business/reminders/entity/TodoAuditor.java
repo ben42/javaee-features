@@ -1,5 +1,7 @@
 package ch.afterglowing.doit.business.reminders.entity;
 
+import ch.afterglowing.doit.business.reminders.boundary.ChangeEvent;
+
 import javax.enterprise.context.spi.CreationalContext;
 import javax.enterprise.event.Event;
 import javax.enterprise.inject.spi.Bean;
@@ -8,23 +10,37 @@ import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.PostPersist;
+import javax.persistence.PostUpdate;
 
 /**
  * Created by ben on 27.09.15.
  */
 public class TodoAuditor {
 
+
+    // does not work under wildfly due to bug WFLY-2387
+    @Inject
+    @ChangeEvent(ChangeEvent.Type.CREATION)
+    Event<Todo> create;
+
+
+    // does not work under wildfly due to bug WFLY-2387
+    @Inject
+    @ChangeEvent(ChangeEvent.Type.UPDATE)
+    Event<Todo> update;
+
     // @Inject
     // BeanManager beanManager;
 
-    // does not work under wildfly due to bug WFLY-2387
-    // @Inject
-    Event<Todo> todoUpdated;
-
     @PostPersist
-    public void onTodoUpdate(Todo todo) {
-        System.out.println("Updating " + todo);
+    public void onPersist(Todo todo) {
+        System.out.println("Persisting " + todo);
+        create.fire(todo);
+    }
 
-        //todoUpdated.fire(todo);
+    @PostUpdate
+    public void onUpdate(Todo todo) {
+        System.out.println("Updating " + todo);
+        update.fire(todo);
     }
 }

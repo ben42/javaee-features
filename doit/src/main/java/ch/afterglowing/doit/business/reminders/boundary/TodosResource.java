@@ -4,20 +4,21 @@ import ch.afterglowing.doit.business.reminders.entity.Todo;
 
 import javax.inject.Inject;
 import javax.validation.Valid;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
+import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 import java.net.URI;
 import java.util.List;
 
+
 /**
  * Created by ben on 24.09.15.
  */
+@javax.ejb.Stateless
 @Path("todos")
+@Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
 public class TodosResource {
 
 

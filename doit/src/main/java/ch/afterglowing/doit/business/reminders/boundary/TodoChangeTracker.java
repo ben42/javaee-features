@@ -6,6 +6,9 @@ import javax.ejb.ConcurrencyManagement;
 import javax.ejb.ConcurrencyManagementType;
 import javax.ejb.Singleton;
 import javax.enterprise.event.Observes;
+import javax.json.Json;
+import javax.json.JsonObject;
+import javax.websocket.EncodeException;
 import javax.websocket.OnClose;
 import javax.websocket.OnOpen;
 import javax.websocket.Session;
@@ -18,7 +21,7 @@ import static javax.enterprise.event.TransactionPhase.AFTER_SUCCESS;
  * Created by ben on 27.09.15.
  */
 @Singleton
-@ServerEndpoint("/changes")
+@ServerEndpoint(value = "/changes", encoders = JsonEncoder.class)
 @ConcurrencyManagement(ConcurrencyManagementType.BEAN)
 public class TodoChangeTracker {
 
@@ -34,13 +37,18 @@ public class TodoChangeTracker {
         this.session = null;
     }
 
-    // triggered only by successful updates
-    public void onTodoChange(@Observes(during = AFTER_SUCCESS) Todo todo) {
+    // triggered only for successful updates
+    public void onTodoChange(@Observes(during = AFTER_SUCCESS) @ChangeEvent(ChangeEvent.Type.CREATION) Todo todo) {
         if (session != null && session.isOpen()) {
             try {
-                session.getBasicRemote().sendText(todo.toString());
+                JsonObject jsonObject = Json.createObjectBuilder()
+                        .add("id", todo.getId())
+                        .add("event", "creation").build();
+                session.getBasicRemote().sendObject(jsonObject);
             } catch (IOException e) {
                 // safely ignore it
+            } catch (EncodeException e) {
+                e.printStackTrace();
             }
         }
     }
