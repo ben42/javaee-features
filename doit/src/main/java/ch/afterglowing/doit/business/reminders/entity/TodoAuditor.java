@@ -15,24 +15,24 @@ import javax.persistence.PostUpdate;
 public class TodoAuditor {
 
     // does not work under wildfly due to bug WFLY-2387
-    @Inject
+    //@Inject
     @ChangeEvent(ChangeEvent.Type.CREATION)
     Event<Todo> create;
 
     // does not work under wildfly due to bug WFLY-2387
-    @Inject
+    //@Inject
     @ChangeEvent(ChangeEvent.Type.UPDATE)
     Event<Todo> update;
 
     @PostPersist
     public void onPersist(Todo todo) {
         System.out.println("Persisting " + todo);
-        create.fire(todo);
+        //create.fire(todo);
     }
 
     @PostUpdate
     public void onUpdate(Todo todo) {
         System.out.println("Updating " + todo);
-        update.fire(todo);
+        //update.fire(todo);
     }
 }

@@ -1,16 +1,22 @@
 package ch.afterglowing.doit.business.reminders.boundary;
 
+import com.jayway.restassured.path.json.JsonPath;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 
 import javax.json.Json;
 import javax.json.JsonArray;
 import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
+import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.Response;
+import javax.xml.ws.WebServiceClient;
 
+import static com.jayway.restassured.path.json.JsonPath.from;
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -21,10 +27,18 @@ import static org.hamcrest.MatcherAssert.assertThat;
 public class TodosResourceIT {
 
     private String baseUri = "http://localhost:8080/doit/api/todos";
+    private Client client;
 
-    private WebTarget target(String uri) {
-        // TODO close the client instances
-        return ClientBuilder.newClient().target(uri);
+    @Before
+    public void setup() {
+        client = ClientBuilder.newClient();
+    }
+
+    @After
+    public void teardown() {
+        if (client != null) {
+            client.close();
+        }
     }
 
     @Test
@@ -32,59 +46,66 @@ public class TodosResourceIT {
         // add Todo
         JsonObjectBuilder todoBuilder = Json.createObjectBuilder();
         JsonObject buildedTodo = todoBuilder.add("caption", "Implement REST Service").add("priority", 9).build();
-        Response postReponse = target(baseUri).request().post(Entity.json(buildedTodo));
+        Client client = ClientBuilder.newClient();
+        Response postReponse = client.target(baseUri).request().post(Entity.json(buildedTodo));
         assertThat(postReponse.getStatus(), is(201));
         String location = postReponse.getHeaderString("Location");
-        System.out.println("Got Location back for newly created Todo: " + location);
+        postReponse.close();
 
         // find all Todos
-        Response response = target(baseUri).request(APPLICATION_JSON).get();
+        Response response = client.target(baseUri).request(APPLICATION_JSON).get();
         assertThat(response.getStatus(), is(200));
         JsonArray allTodos = response.readEntity(JsonArray.class);
         assertThat(allTodos.size(), is(not(0)));
 
         // find single Todo
-        JsonObject todo = target(location).request(APPLICATION_JSON).get(JsonObject.class);
-        assertThat(todo.getString("caption"), containsString("Implement REST Service"));
+        String todo = client.target(location).request(APPLICATION_JSON).get(String.class);
+        // using JsonPath from rest assured to validate more complex JSON responses
+        assertThat(from(todo).getString("caption"), containsString("Implement REST Service"));
 
         // update the Todo
         JsonObject todoToUpdate = todoBuilder.add("caption", "Implemented!").build();
-        response = target(location).request(APPLICATION_JSON).put(Entity.json(todoToUpdate));
+        response = client.target(location).request(APPLICATION_JSON).put(Entity.json(todoToUpdate));
+        response.close();
         assertThat(response.getStatus(), is(200));
 
         // update the Todo again to test Optimistic Locking
         todoToUpdate = todoBuilder.add("priority", 9).build();
-        response = target(location).request(APPLICATION_JSON).put(Entity.json(todoToUpdate));
+        response = client.target(location).request(APPLICATION_JSON).put(Entity.json(todoToUpdate));
+        response.close();
         String cause = response.getHeaderString("cause");
-        System.out.println(cause);
         assertThat(response.getStatus(), is(409));
         assertThat(cause, is(notNullValue()));
 
         // find the Todo again
-        JsonObject updatedTodo = target(location).request(APPLICATION_JSON).get(JsonObject.class);
+        JsonObject updatedTodo = client.target(location).request(APPLICATION_JSON).get(JsonObject.class);
         assertThat(updatedTodo.getString("caption"), containsString("Implemented!"));
 
         // update the Status of the Todo
         JsonObjectBuilder statusBuilder = Json.createObjectBuilder();
         JsonObject todoToUpdateStatus = statusBuilder.add("done", true).build();
-        target(location).path("status").request(APPLICATION_JSON).put(Entity.json(todoToUpdateStatus));
+        Response putResponse = client.target(location).path("status").request(APPLICATION_JSON).put(Entity.json(todoToUpdateStatus));
+        putResponse.close();
 
         // find the Todo again and verify the status
-        updatedTodo = target(location).request(APPLICATION_JSON).get(JsonObject.class);
+        updatedTodo = client.target(location).request(APPLICATION_JSON).get(JsonObject.class);
         assertThat(updatedTodo.getBoolean("done"), is(true));
 
         // update the Status of a non-existing Todo
-        response = target(baseUri).path("666").path("status").request(APPLICATION_JSON).put(Entity.json(Json.createObjectBuilder().add("done", true).build()));
+        response = client.target(baseUri).path("666").path("status").request(APPLICATION_JSON).put(Entity.json(Json.createObjectBuilder().add("done", true).build()));
+        response.close();
         assertThat(response.getStatus(), is(400));
         assertThat(response.getHeaderString("reason"), containsString("666"));
 
         // update the Status of the Todo with a wrong attribute name
-        response = target(location).path("status").request(APPLICATION_JSON).put(Entity.json(Json.createObjectBuilder().add("wrong-attribute", true).build()));
+        response = client.target(location).path("status").request(APPLICATION_JSON).put(Entity.json(Json.createObjectBuilder().add("wrong-attribute", true).build()));
+        response.close();
         assertThat(response.getStatus(), is(400));
         assertThat(response.getHeaderString("reason"), containsString("Attribute done not provided"));
 
         // delete Todo
-        Response deleteResponse = target(location).request(APPLICATION_JSON).delete();
+        Response deleteResponse = client.target(location).request(APPLICATION_JSON).delete();
+        deleteResponse.close();
         assertThat(deleteResponse.getStatus(), is(204));
     }
 
@@ -93,7 +114,7 @@ public class TodosResourceIT {
         // mandatory field "caption" is missing
         JsonObjectBuilder todoBuilder = Json.createObjectBuilder();
 
-        Response postReponse = target(baseUri).request().post(Entity.json(todoBuilder.add("priority", 1).build()));
+        Response postReponse = ClientBuilder.newClient().target(baseUri).request().post(Entity.json(todoBuilder.add("priority", 1).build()));
         postReponse.getHeaders().entrySet().forEach(System.out::println);
         assertThat(postReponse.getStatus(), is(400));
     }
@@ -103,7 +124,7 @@ public class TodosResourceIT {
         // mandatory field "caption" is missing
         JsonObjectBuilder todoBuilder = Json.createObjectBuilder();
 
-        Response postReponse = target(baseUri).request().post(Entity.json(
+        Response postReponse = ClientBuilder.newClient().target(baseUri).request().post(Entity.json(
                 todoBuilder.add("priority", 666).add("caption", "Implemented!").build()));
         postReponse.getHeaders().entrySet().forEach(System.out::println);
         assertThat(postReponse.getStatus(), is(400));

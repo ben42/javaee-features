@@ -2,6 +2,7 @@ package ch.afterglowing.doit.business.reminders.boundary;
 
 import ch.afterglowing.doit.business.reminders.entity.Todo;
 
+import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.validation.Valid;
 import javax.ws.rs.*;
@@ -12,11 +13,10 @@ import javax.ws.rs.core.UriInfo;
 import java.net.URI;
 import java.util.List;
 
-
 /**
  * Created by ben on 24.09.15.
  */
-@javax.ejb.Stateless
+@Stateless
 @Path("todos")
 @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
 public class TodosResource {
