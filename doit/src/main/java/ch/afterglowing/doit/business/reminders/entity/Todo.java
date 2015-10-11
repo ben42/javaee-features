@@ -1,5 +1,6 @@
 package ch.afterglowing.doit.business.reminders.entity;
 
+import ch.afterglowing.doit.business.auditing.boundary.StringHelper;
 import ch.afterglowing.doit.business.domainvalidation.CrossCheck;
 import ch.afterglowing.doit.business.domainvalidation.ValidEntity;
 
@@ -86,22 +87,22 @@ public class Todo implements ValidEntity {
     }
 
     @Override
-    public String toString() {
-        return "Todo{" +
-                "id=" + id +
-                ", caption='" + caption + '\'' +
-                ", description='" + description + '\'' +
-                ", priority=" + priority +
-                ", done=" + done +
-                ", version=" + version +
-                '}';
-    }
-
-    @Override
     public boolean isValid() {
         if(priority < 10) {
             return true;
         }
         return description != null && !description.isEmpty();
+    }
+
+    @Override
+    public String toString() {
+        return StringHelper.get(this)
+                .add("id", id)
+                .add("caption", caption)
+                .add("description", description)
+                .add("priority", priority)
+                .add("done", done)
+                .add("version", version)
+                .toString();
     }
 }
